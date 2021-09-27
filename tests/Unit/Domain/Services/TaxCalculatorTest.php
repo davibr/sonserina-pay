@@ -30,7 +30,10 @@ class TaxCalculatorTest extends TestCase
             ->method('getIncrementValue')
             ->willReturn($clientIncrementReturn);
         $service = new TaxCalculator($client);
-        $service->calculate($amount, $tax);
+
+        $slytherinTax = $service->getSlytherinTax($tax);
+
+        $service->calculate($amount, $tax, $slytherinTax);
         $received = $expected;
         $this->assertEquals($expected, $received);
     }
@@ -38,8 +41,8 @@ class TaxCalculatorTest extends TestCase
     public function taxDataProvider(): array
     {
         return [
-            'menor que o esperado para taxa dinamica' => [0.0, 100, 1, 106, 0],
-            'igual que o esperado para taxa dinamica' => [0.0, 100, 2, 108.14, 0],
+            'menor que o esperado para taxa dinamica' => [0.0, 100, 1, 104.14, 0],
+            'igual que o esperado para taxa dinamica' => [0.0, 100, 2, 105.14, 0],
             'maior que o esperado para taxa dinamica' => [16.0, 100, 7, 123, 1],
         ];
     }

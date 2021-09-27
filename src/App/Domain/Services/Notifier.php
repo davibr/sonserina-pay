@@ -6,6 +6,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Clients\NotifierClientInterface;
 use App\Domain\Entities\Notification;
+use App\Domain\Entities\Transaction;
 
 class Notifier
 {
@@ -19,8 +20,33 @@ class Notifier
         $this->client = $client;
     }
 
-    public function notify(Notification $notification): void
+    /**
+     * @param Transaction $transaction
+     * @return Notification
+     */
+    private function generateBuyerNotification(Transaction $transaction): Notification
     {
-        $this->client->notify($notification);
+        return new Notification(
+            $transaction->getBuyer()->getEmail(),
+            "Transação de {$transaction->getTotalAmount()} realizada para {$transaction->getSeller()->getName()}."
+        );
+    }
+
+    /**
+     * @param Transaction $transaction
+     * @return Notification
+     */
+    private function generateSellerNotification(Transaction $transaction): Notification
+    {
+        return new Notification(
+            $transaction->getSeller()->getEmail(),
+            "Transação de {$transaction->getTotalAmount()} realizada por {$transaction->getBuyer()->getName()}."
+        );
+    }
+
+    public function notify(Transaction $transaction): void
+    {
+        $this->client->notify($this->generateBuyerNotification($transaction));
+        $this->client->notify($this->generateSellerNotification($transaction));
     }
 }

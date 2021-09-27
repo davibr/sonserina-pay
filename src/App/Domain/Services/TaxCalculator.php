@@ -26,15 +26,25 @@ class TaxCalculator
 
     /**
      * @param float $tax
+     * @param float $slytherinTax
      * @return float
      */
-    private function getRealTaxValue(float $tax): float
+    private function getRealTaxValue(float $tax, float $slytherinTax): float
+    {
+        return 1 + (($slytherinTax + $tax) / 100);
+    }
+
+    /**
+     * @param float $tax
+     * @return float
+     */
+    public function getSlytherinTax(float $tax): float
     {
         $increment = self::DEFAULT_INCREMENT_VALUE;
         if ($tax > 5) {
             $increment = $this->client->getIncrementValue($tax);
         }
-        return 1 + (($increment + $tax) / 100);
+        return $increment;
     }
 
     /**
@@ -42,8 +52,8 @@ class TaxCalculator
      * @param float $tax
      * @return float
      */
-    public function calculate(float $amount, float $tax): float
+    public function calculate(float $amount, float $tax, float $slytherinTax): float
     {
-        return $amount * $this->getRealTaxValue($tax);
+        return $amount * $this->getRealTaxValue($tax, $slytherinTax);
     }
 }

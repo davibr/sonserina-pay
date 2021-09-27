@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./
+    container_name: slytherin-pay
+    ports:
+      - 8000:80
+    restart: always
+    volumes:
+      - ./:/app
+  composer:
+    image: composer:2
+    environment:
+      - COMPOSER_CACHE_DIR=/app/.cache/composer
+    volumes:
+      - .:/app
+    restart: always
